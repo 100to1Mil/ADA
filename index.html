@@ -217,12 +217,31 @@
       <span class="label">FREE GUIDE</span>
       <h2>The Quick-Start Playbook</h2>
       <p>Five mistakes almost every beginner makes in their first month of detailing — and how to skip past them entirely. Straight to your inbox.</p>
-      <form class="capture-form" action="https://formspree.io/f/xnpnakby" method="POST">
+      <form class="capture-form" id="playbook-form">
         <input type="email" name="email" placeholder="Enter your email" required>
         <input type="hidden" name="_subject" value="New Quick-Start Playbook signup">
-        <input type="hidden" name="_next" value="thank-you.html">
         <button type="submit" class="btn-red-form">Send Me the Playbook</button>
       </form>
+      <script>
+        document.getElementById('playbook-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          const form = e.target;
+          const data = new FormData(form);
+          fetch('https://formspree.io/f/xnpnakby', {
+            method: 'POST',
+            body: data,
+            headers: { 'Accept': 'application/json' }
+          }).then(function(response) {
+            if (response.ok) {
+              window.location.href = 'thank-you.html';
+            } else {
+              alert('Something went wrong. Please try again or email theautodetailingacademy@gmail.com directly.');
+            }
+          }).catch(function() {
+            alert('Something went wrong. Please try again or email theautodetailingacademy@gmail.com directly.');
+          });
+        });
+      </script>
     </div>
   </div>
 </section>
