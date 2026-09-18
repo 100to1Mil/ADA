@@ -33,18 +33,35 @@
   .nav-links a.active { color:var(--red); }
   .nav-cta { font-family:'Oswald',sans-serif; font-weight:700; font-size:0.8rem; letter-spacing:0.03em; background:var(--red); color:var(--white); padding:11px 18px; border-radius:3px; white-space:nowrap; }
 
-  .pagehero { padding:56px 0 44px; text-align:center; }
+  .pagehero { padding:56px 0 36px; text-align:center; }
   .pagehero .label { display:block; margin-bottom:16px; }
   .pagehero h1 { font-size: clamp(2.1rem, 6.5vw, 3.2rem); max-width:16ch; margin:0 auto 18px; font-weight:800; }
   .pagehero p { max-width:46ch; margin:0 auto; color:#3d3a34; font-size:1.05rem; font-weight:500; }
 
-  .post-grid { padding: 20px 0 76px; display:grid; grid-template-columns:1fr; gap:1px; background:var(--line); border:1px solid var(--line); max-width: 880px; margin: 0 auto; }
+  /* CATEGORY FILTER */
+  .cat-filter {
+    display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
+    padding: 0 24px 40px; max-width: 880px; margin: 0 auto;
+  }
+  .cat-pill {
+    font-family:'Oswald',sans-serif; font-weight:600; font-size:0.82rem; letter-spacing:0.02em;
+    padding: 9px 18px; border-radius:20px; border:2px solid var(--black);
+    background:var(--white); color:var(--black); cursor:pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .cat-pill.active { background:var(--black); color:var(--white); }
+  .cat-pill:not(.active):hover { border-color:var(--red); color:var(--red); }
+
+  .post-grid { padding: 0 0 76px; display:grid; grid-template-columns:1fr; gap:1px; background:var(--line); border:1px solid var(--line); max-width: 880px; margin: 0 auto; }
   @media (min-width:700px){ .post-grid{ grid-template-columns:1fr 1fr; } }
   .post-card { background:var(--white); padding:30px 28px; display:flex; flex-direction:column; }
+  .post-card.hidden { display:none; }
   .post-card .tag { display:inline-block; font-family:'Oswald',sans-serif; font-size:0.66rem; font-weight:700; letter-spacing:0.05em; color:var(--red); border:1px solid rgba(196,30,47,0.4); padding:3px 9px; border-radius:20px; margin-bottom:14px; align-self:flex-start; }
   .post-card h3 { font-size:1.3rem; margin-bottom:12px; }
   .post-card p { color:#4a473f; font-size:0.94rem; margin-bottom:18px; flex-grow:1; }
   .post-card .read-more { font-family:'Oswald',sans-serif; font-weight:700; font-size:0.8rem; letter-spacing:0.03em; color:var(--black); border-bottom:2px solid var(--red); padding-bottom:2px; align-self:flex-start; }
+
+  .empty-state { text-align:center; padding: 40px 24px 76px; color:var(--gray); font-size:0.95rem; display:none; }
 
   .ctaband { background:var(--red); padding:56px 0; text-align:center; }
   .ctaband h2 { color:var(--white); font-size:clamp(1.6rem,5vw,2.2rem); margin-bottom:16px; }
@@ -85,20 +102,51 @@
   </div>
 </section>
 
-<div class="post-grid">
-  <a href="blog-starter-kit.html" class="post-card">
+<div class="cat-filter" id="cat-filter">
+  <button class="cat-pill active" data-cat="all">All Posts</button>
+  <button class="cat-pill" data-cat="getting-started">Getting Started</button>
+  <button class="cat-pill" data-cat="business">Running the Business</button>
+  <button class="cat-pill" data-cat="technique">Technique</button>
+  <button class="cat-pill" data-cat="products">Products</button>
+</div>
+
+<div class="post-grid" id="post-grid">
+  <a href="blog-starter-kit.html" class="post-card" data-cat="getting-started">
     <span class="tag">GETTING STARTED</span>
     <h3>The Beginner's Starter Kit: What You Actually Need (And What You Don't)</h3>
     <p>Forty bottles on a shelf isn't a starter kit — it's a distraction. Here's the short list that actually gets you doing real details.</p>
     <span class="read-more">Read the post &rarr;</span>
   </a>
-  <a href="blog-pricing.html" class="post-card">
+  <a href="blog-pricing.html" class="post-card" data-cat="business">
     <span class="tag">RUNNING THE BUSINESS</span>
     <h3>How to Price Your First Details Without Underselling Yourself</h3>
     <p>Undercharging doesn't just cost you money today — it trains your customers to expect it forever. Here's how to think about pricing from job one.</p>
     <span class="read-more">Read the post &rarr;</span>
   </a>
 </div>
+
+<div class="empty-state" id="empty-state">Nothing posted in this category yet — check back soon.</div>
+
+<script>
+  const pills = document.querySelectorAll('.cat-pill');
+  const cards = document.querySelectorAll('.post-card');
+  const emptyState = document.getElementById('empty-state');
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const cat = pill.dataset.cat;
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const match = cat === 'all' || card.dataset.cat === cat;
+        card.classList.toggle('hidden', !match);
+        if (match) visibleCount++;
+      });
+      emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    });
+  });
+</script>
 
 <section class="ctaband">
   <div class="wrap">
